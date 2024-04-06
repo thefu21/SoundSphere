@@ -1,5 +1,7 @@
 <script>
-    import RadioPlayer from "./RadioPlayer.svelte";
+    import FullScreenPlayer from "$lib/components/FullScreenPlayer.svelte";
 </script>
 
-<RadioPlayer></RadioPlayer>
+<main class="text-white">
+    <FullScreenPlayer></FullScreenPlayer>
+</main>

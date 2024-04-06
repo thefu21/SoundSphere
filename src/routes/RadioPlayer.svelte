@@ -23,6 +23,8 @@
                     // Verwende die "urlResolved"-Eigenschaft des OE1-Radiosenders zum Abspielen
                     const streamUrl = oe1Station.urlResolved;
 
+                    console.log(oe1Station)
+
                     // Erstelle ein Audio-Element und spiele OE1 ab
                     audio = new Audio('https://orf-live.ors-shoutcast.at/oe1-q2a');
                     await audio.play();
