@@ -56,8 +56,7 @@ export async function newAccessToken(clientID, code) {
     params.append("code", code)
     params.append("redirect_uri", window.location.href.split(/[?#]/)[0])
     params.append("code_verifier", spotifyVerifier)
-
-    const result = await fetch("https://accounts.spotify.com/api/token", {
+    await fetch("https://accounts.spotify.com/api/token", {
         method: "POST", headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: params
     }).then(response => {
         if (!response.ok) {
@@ -75,7 +74,6 @@ export async function newAccessToken(clientID, code) {
         .catch(error => {
             console.error('Error:', error);
         });
-
 }
 
 export const logout = () => {

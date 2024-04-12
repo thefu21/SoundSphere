@@ -1,15 +1,4 @@
-const searchArtists = async (e) => {
-        e.preventDefault()
-        console.log(await axios.get("https://api.spotify.com/v1/search", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            params: {
-                q: searchValue,
-                type: "track"
-            }
-        }))
-    }
+
 
     const playTrack = async () => {
         try {
@@ -31,12 +20,6 @@ const searchArtists = async (e) => {
 
     onMount(() => {
         window.onSpotifyWebPlaybackSDKReady = () => {
-            const player = new Spotify.Player({
-                name: 'Web Playback SDK Quick Start Player',
-                getOAuthToken: cb => { cb(token); },
-                volume: 0.5
-            });
 
-            player.connect()
         }
     })
