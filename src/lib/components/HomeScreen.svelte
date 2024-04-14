@@ -83,13 +83,9 @@
             );
         }
     })
-
-
-
-
 </script>
 
-<main style={`background-color: ${nowPlayingImageColor || '#181414'}`} class="h-screen grid grid-cols-11 grid-rows-12">
+<main style={`background: linear-gradient(0deg, #171313 0%, ${nowPlayingImageColor || '#181414'} 100%);`} class="h-screen grid grid-cols-11 grid-rows-12">
     <div class="flex justify-center items-center row-start-1 row-end-3  col-start-0 col-end-2">
         <Button class="bg-transparent hover:bg-transparent hover:text-gray-500 active:text-gray-800"><Menu size="32"/></Button>
     </div>
@@ -121,3 +117,4 @@
         <Button class="bg-transparent hover:bg-transparent hover:text-gray-500 active:text-gray-800"><SkipForward size="48"/></Button>
     </div>
 </main>
+
