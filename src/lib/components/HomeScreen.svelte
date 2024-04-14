@@ -79,9 +79,9 @@
             <Skeleton class="w-full h-full"/>
         </AspectRatio>
     </div>
-    <div class="col-start-3 col-end-10 row-start-9 leading-tight">
-        <h3 class="text-2xl">Title</h3><br>
-        <p class="text-xl">Artist</p>
+    <div class="col-start-3 col-end-10 row-start-9 row-end-10 lg:pt-8">
+        <h3 class="text-2xl text-white">Title</h3>
+        <p class="text-xl text-gray-600">Artist</p>
     </div>
     <div class="flex justify-center items-center col-start-3 col-end-10 row-start-10">
         <Progress id="progress" class="h-2"></Progress>
