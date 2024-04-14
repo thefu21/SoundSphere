@@ -10,7 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="spotify-player" level="application" />
     <orderEntry type="library" name="spotify-player" level="application" />
-    <orderEntry type="library" name="color-thief" level="application" />
     <orderEntry type="library" name="fast-average-color" level="application" />
     <orderEntry type="library" name="fast-average-color" level="application" />
   </component>
