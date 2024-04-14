@@ -22,6 +22,7 @@
 		"axios": "^1.6.8",
 		"bits-ui": "^0.21.3",
 		"clsx": "^2.1.0",
+		"colorthief": "^2.2.0",
 		"lucide-svelte": "^0.368.0",
 		"radio-browser-api": "^6.0.1",
 		"tailwind-merge": "^2.2.2",
