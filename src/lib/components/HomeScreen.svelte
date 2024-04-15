@@ -10,12 +10,15 @@
     import {Label} from '$lib/components/ui/label/index.js';
     import {Skeleton} from '$lib/components/ui/skeleton/index.js';
     import {AspectRatio} from '$lib/components/ui/aspect-ratio/index.js';
+    import {spotifyApiSearch} from "$lib/spotify/playerApi.js";
 
     const clientID = 'eed7eaff183d4604b08e9de07393fbdd';
 
     let player;
 
     let paused;
+    let input;
+    let searchResult = "";
 
     let nowPlayingImageUrl;
     let nowPlayingObject;
@@ -23,6 +26,12 @@
     let nowPlayingPosition;
     let nowPlayingLength;
 
+    const getSearchElements = (q) => {
+        searchResult = spotifyApiSearch(q, "track", clientID).then((r) => {
+            return r.data.tracks.items;
+        });
+        console.log(searchResult)
+    }
 
     onMount(() => {
         const fac = new FastAverageColor();
@@ -45,30 +54,6 @@
             });
 
             player.connect()
-
-            const spotifyApiSearch = async (query, type) => {
-                return await axios.get("https://api.spotify.com/v1/search", {
-                    headers: {
-                        Authorization: `Bearer ${getAccessToken(clientID)}`
-                    },
-                    params: {
-                        q: query,
-                        type: type
-                    }
-                })
-            }
-
-            /*
-            spotifyApiSearch("keine ahnung", "track").then(result => {
-                result.data.tracks.items.forEach(track => {
-                    console.log("Track Name:", track.name);
-                    console.log("Artist(s):", track.artists.map(artist => artist.name).join(", "));
-                    console.log("Duration:", Math.floor((track.duration_ms/1000/60) << 0) + ":" + Math.floor((track.duration_ms/1000) % 60) + " min");
-                    console.log("Explicit:", track.explicit ? "Yes" : "No");
-                    console.log("------------------------------------------");
-                })
-            })
-             */
 
             setInterval(() => nowPlayingPosition += paused ? 0 : 300, 300);
 
@@ -104,7 +89,7 @@
         <Button class="bg-transparent hover:bg-transparent hover:text-gray-400 active:text-[#181414]"><Menu size="32"/></Button>
     </div>
     <div class="flex justify-center items-center row-start-1 row-end-3  col-start-3 col-end-10">
-        <Input class="h-[24px]" placeholder="Search" type="text"><Search color="#74747a"/></Input>
+        <Input on:input={(value) => {getSearchElements(value)}} class="h-[24px]" placeholder="Search" type="text"><Search color="#74747a"/></Input>
     </div>
     <div class="flex justify-center items-center row-start-1 row-end-3  col-start-10 col-end-12">
         <Label for="spotifyRadioToggle"><RadioTower color={`${nowPlayingImageColor === undefined ? '#74747a' : '#181414'}`}/></Label>
