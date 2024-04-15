@@ -1,16 +1,17 @@
 <script>
     import {redirectToAuthCodeFlow, newAccessToken, getAccessToken, logout} from "$lib/spotify/auth.js";
-    import {onMount} from "svelte";
+    import {onDestroy, onMount} from 'svelte';
     import axios from "axios";
+    import {AudioLines, CirclePause, CirclePlay, Menu, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
     import { Input } from "$lib/components/ui/input/index.js"
     import { Switch } from "$lib/components/ui/switch/index.js"
     import { Button } from "$lib/components/ui/button/index.js"
     import { Progress } from "$lib/components/ui/progress/index.js"
-    import {AudioLines, CirclePause, CirclePlay, Menu, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
     import {Label} from '$lib/components/ui/label/index.js';
     import {Skeleton} from '$lib/components/ui/skeleton/index.js';
     import {AspectRatio} from '$lib/components/ui/aspect-ratio/index.js';
     import {spotifyApiSearch} from "$lib/spotify/playerApi.js";
+    import {isSpotify, isSpotifySdkReady} from '$lib/stores/stores.js';
 
     const clientID = 'eed7eaff183d4604b08e9de07393fbdd';
 
@@ -20,9 +21,10 @@
     let input;
     let searchResult = "";
 
+    let nowPlayingImageColor;
     let nowPlayingImageUrl;
     let nowPlayingObject;
-    let nowPlayingImageColor;
+
     let nowPlayingPosition;
     let nowPlayingLength;
 
@@ -36,7 +38,12 @@
     onMount(() => {
         const fac = new FastAverageColor();
 
-        window.onSpotifyWebPlaybackSDKReady = async function () {
+        isSpotifySdkReady.subscribe(async () => {
+            if ($isSpotifySdkReady) {
+            }
+
+            console.log("hallo");
+
             const authCode = new URLSearchParams(window.location.search).get(
                 "code"
             );
@@ -66,7 +73,7 @@
                 nowPlayingLength = r.duration;
             });
 
-            player.addListener('ready', ({ device_id }) => {
+            player.addListener('ready', ({device_id}) => {
                 axios.put("https://api.spotify.com/v1/me/player",
                     {
                         "device_ids": [device_id]
@@ -79,7 +86,13 @@
                     }
                 )
             });
+        })
 
+
+        return () => {
+            player.pause();
+            player.disconnect();
+            return true;
         }
     })
 </script>
@@ -93,7 +106,7 @@
     </div>
     <div class="flex justify-center items-center row-start-1 row-end-3  col-start-10 col-end-12">
         <Label for="spotifyRadioToggle"><RadioTower color={`${nowPlayingImageColor === undefined ? '#74747a' : '#181414'}`}/></Label>
-        <Switch style={`background-color: ${nowPlayingImageColor === undefined ? '#74747a' : '#181414'}`} class="m-3" id="spotifyRadioToggle"></Switch>
+        <Switch checked on:click={() => isSpotify.set(false)} class="m-3" id="spotifyRadioToggle"></Switch>
         <Label for="spotifyRadioToggle"><AudioLines color={`${nowPlayingImageColor === undefined ? '#74747a' : '#181414'}`}/></Label>
     </div>
     <div class="flex justify-center items-center row-start-3 row-end-9 col-start-5 col-end-8">

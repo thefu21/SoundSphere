@@ -1,5 +1,13 @@
 <script>
-    import HomeScreen from "$lib/components/HomeScreen.svelte";
+    import SpotifyPlayer from "$lib/components/spotify/SpotifyPlayer.svelte";
+    import RadioPlayer from '$lib/components/radio/RadioPlayer.svelte';
+    import {onMount} from 'svelte';
+    import {isSpotify, isSpotifySdkReady} from '$lib/stores/stores.js';
+
+    onMount(() => {
+        localStorage.getItem('isSpotify');
+        window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
+    })
 </script>
 
 <svelte:head>
@@ -8,5 +16,8 @@
     <title>SoundSphere</title>
 </svelte:head>
 
-
-<HomeScreen></HomeScreen>
+{#if $isSpotify}
+    <SpotifyPlayer/>
+    {:else}
+    <RadioPlayer></RadioPlayer>
+{/if}
