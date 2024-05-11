@@ -1,6 +1,6 @@
 <script>
-    import {redirectToAuthCodeFlow, newAccessToken, getAccessToken, logout} from "$lib/spotify/auth.js";
-    import {onDestroy, onMount} from 'svelte';
+    import {newAccessToken, getAccessToken, logout, redirectToAuthCodeFlow} from "$lib/spotify/auth.js";
+    import {onMount} from 'svelte';
     import axios from "axios";
     import {AudioLines, CirclePause, CirclePlay, Menu, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
     import { Input } from "$lib/components/ui/input/index.js"
@@ -40,59 +40,56 @@
 
         isSpotifySdkReady.subscribe(async () => {
             if ($isSpotifySdkReady) {
-            }
+                const authCode = new URLSearchParams(window.location.search).get(
+                    "code"
+                );
+                if (authCode) {
+                    await newAccessToken(clientID, authCode);
+                    window.history.replaceState({}, document.title, window.location.origin + window.location.pathname);
+                }
 
-            console.log("hallo");
-
-            const authCode = new URLSearchParams(window.location.search).get(
-                "code"
-            );
-            if (authCode) {
-                await newAccessToken(clientID, authCode);
-                window.history.replaceState({}, document.title, window.location.origin + window.location.pathname);
-            }
-
-            player = new Spotify.Player({
-                name: 'SoundSphere',
-                getOAuthToken: cb => {
-                    cb(getAccessToken(clientID));
-                },
-                volume: 0.5
-            });
-
-            player.connect()
-
-            setInterval(() => nowPlayingPosition += paused ? 0 : 300, 300);
-
-            player.addListener('player_state_changed', (r) => {
-                nowPlayingObject = r.track_window.current_track;
-                nowPlayingImageUrl = nowPlayingObject.album.images[2].url;
-                fac.getColorAsync(nowPlayingImageUrl).then(res => nowPlayingImageColor = res.hex);
-                paused = r.paused;
-                nowPlayingPosition = r.position;
-                nowPlayingLength = r.duration;
-            });
-
-            player.addListener('ready', ({device_id}) => {
-                axios.put("https://api.spotify.com/v1/me/player",
-                    {
-                        "device_ids": [device_id]
+                // noinspection JSUnresolvedReference
+                player = new Spotify.Player({
+                    name: 'SoundSphere',
+                    getOAuthToken: cb => {
+                        cb(getAccessToken(clientID));
                     },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${getAccessToken(clientID)}`,
-                            'Content-Type': 'application/json',
+                    volume: 0.5
+                });
+
+                player.connect()
+
+                setInterval(() => nowPlayingPosition += paused ? 0 : 300, 300);
+
+                player.addListener('player_state_changed', (r) => {
+                    nowPlayingObject = r.track_window.current_track;
+                    nowPlayingImageUrl = nowPlayingObject.album.images[2].url;
+                    fac.getColorAsync(nowPlayingImageUrl).then(res => nowPlayingImageColor = res.hex);
+                    paused = r.paused;
+                    nowPlayingPosition = r.position;
+                    nowPlayingLength = r.duration;
+                });
+
+                player.addListener('ready', ({device_id}) => {
+                    axios.put("https://api.spotify.com/v1/me/player",
+                        {
+                            "device_ids": [device_id]
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${getAccessToken(clientID)}`,
+                                'Content-Type': 'application/json',
+                            }
                         }
-                    }
-                )
-            });
+                    )
+                });
+            }
         })
 
 
         return () => {
             player.pause();
-            player.disconnect();
-            return true;
+            return player.disconnect();
         }
     })
 </script>
