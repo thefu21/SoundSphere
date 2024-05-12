@@ -1,20 +1,21 @@
 <script>
-    import {newAccessToken, getAccessToken, logout, redirectToAuthCodeFlow} from "$lib/spotify/auth.js";
+    import {newAccessToken, getAccessToken, redirectToAuthCodeFlow} from "$lib/spotify/auth.js";
     import {onMount} from 'svelte';
     import axios from "axios";
-    import {AudioLines, CirclePause, CirclePlay, Menu, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
+    import {AudioLines, CirclePause, CirclePlay, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
     import { Input } from "$lib/components/ui/input/index.js"
     import { Switch } from "$lib/components/ui/switch/index.js"
     import { Button } from "$lib/components/ui/button/index.js"
     import { Progress } from "$lib/components/ui/progress/index.js"
     import {Label} from '$lib/components/ui/label/index.js';
-    import {Skeleton} from '$lib/components/ui/skeleton/index.js';
+    //import {Skeleton} from '$lib/components/ui/skeleton/index.js';
     import {AspectRatio} from '$lib/components/ui/aspect-ratio/index.js';
     import {spotifyApiSearch} from "$lib/spotify/playerApi.js";
     import {isSpotify, isSpotifySdkReady} from '$lib/stores/stores.js';
     import SearchBar from '$lib/components/spotify/SearchBar.svelte';
     import {mixColors} from '$lib';
     import SideMenu from '$lib/components/spotify/SideMenu.svelte';
+    import {slide, blur} from 'svelte/transition';
 
     const clientID = 'eed7eaff183d4604b08e9de07393fbdd';
 
@@ -173,11 +174,11 @@
             <Label for="spotifyRadioToggle"><AudioLines color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/></Label>
         </div>
         {#if searchResult !== null}
-            <div class="row-start-3 row-end-12 col-start-3 col-end-10">
+            <div in:slide = {{duration: 250, delay: 50}} out:slide = {{duration: 250}} class="row-start-3 row-end-12 col-start-3 col-end-10">
                 <SearchBar callbackAddToQueue={(uri) => addToQueue(uri)} callbackPlaySong={(uri) => playSong(uri)} color={nowPlayingImageColor} songArray={searchResult}></SearchBar>
             </div>
         {:else}
-            <div class="flex justify-center items-center row-start-3 row-end-9 col-start-5 col-end-8">
+            <div in:blur = {{duration: 50, delay: 250}} out:blur = {{duration: 50}} class="flex justify-center items-center row-start-3 row-end-9 col-start-5 col-end-8">
                 <AspectRatio ratio={1}>
                     <img id="nowPlayingImage" src={nowPlayingImageUrl} alt="nowPlayingImage">
                 </AspectRatio>
