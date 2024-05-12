@@ -1,49 +1,82 @@
-<!-- RadioPlayer.svelte -->
-
 <script>
-    import { RadioBrowserApi } from 'radio-browser-api';
-    import {isSpotify} from '$lib/stores/stores.js'
-    import { Input } from "$lib/components/ui/input/index.js"
-    import { Switch } from "$lib/components/ui/switch/index.js"
-    import { Button } from "$lib/components/ui/button/index.js"
-    import { Progress } from "$lib/components/ui/progress/index.js"
+    import {RadioBrowserApi} from 'radio-browser-api';
+    import {isSpotify} from '$lib/stores/stores.js';
+    import {Input} from '$lib/components/ui/input/index.js';
+    import {Switch} from '$lib/components/ui/switch/index.js';
+    import {Button} from '$lib/components/ui/button/index.js';
     import {Label} from '$lib/components/ui/label/index.js';
     import {Skeleton} from '$lib/components/ui/skeleton/index.js';
     import {AspectRatio} from '$lib/components/ui/aspect-ratio/index.js';
-    import {AudioLines, CirclePause, CirclePlay, Menu, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
+    import {AudioLines, CirclePause, CirclePlay, RadioTower, Search} from 'lucide-svelte';
+    import SearchBar from '$lib/components/radio/SearchBar.svelte';
+    import {blur, slide} from 'svelte/transition';
+    import {onMount} from 'svelte';
 
     let audio;
     let playing = false;
+    let loading = false;
+    let fac;
 
-    async function playOE1() {
-        if (!playing) {
-            const api = new RadioBrowserApi('My Radio App');
+    let searchResult = null;
+    let input = '';
+    let nowPlayingImageColor;
+    let nowPlayingImageUrl;
 
-            try {
-                // Suche nach Radiosendern mit dem Namen "oe1" oder dem Tag "oe1"
-                const stations = await api.searchStations({ name: 'oe1' });
-                console.log(stations)
 
-                // Wähle den OE1-Radiosender aus der Antwort aus
-                const oe1Station = stations.find(station => station.name.toLowerCase().includes('oe1'));
+    onMount(() => {
+        fac = new FastAverageColor();
+        let radio = localStorage.getItem('radio').split(',');
+        playRadio(radio[0],radio[1])
 
-                // Überprüfe, ob OE1 gefunden wurde
-                if (oe1Station) {
-                    // Verwende die "urlResolved"-Eigenschaft des OE1-Radiosenders zum Abspielen
-                    const streamUrl = oe1Station.urlResolved;
+        return () => {
+            stopPlayback();
+        }
+    })
 
-                    console.log(oe1Station)
+    const playToggle = () => {
+        if (playing && audio !== undefined) {
+            stopPlayback();
+            playing = false;
+        }
+        else {
+            audio.play();
+            playing = true;
+        }
+    }
 
-                    // Erstelle ein Audio-Element und spiele OE1 ab
-                    audio = new Audio('https://orf-live.ors-shoutcast.at/oe1-q2a');
-                    await audio.play();
-                    playing = true;
-                } else {
-                    console.error('OE1 konnte nicht gefunden werden.');
+    const playRadio = async (url, imgUrl) => {
+        nowPlayingImageUrl = imgUrl;
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(nowPlayingImageUrl)}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
                 }
-            } catch (error) {
-                console.error('Fehler beim Abrufen von OE1:', error);
-            }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                fac.getColorAsync(data.contents).then(res => nowPlayingImageColor = res.hex);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        stopPlayback();
+        audio = new Audio(url);
+        searchResult = null;
+        input = '';
+        await audio.play();
+        playing = true;
+        localStorage.setItem('radio',url + ',' + imgUrl);
+
+    }
+
+    const getSearchResult = async () => {
+        if (input === "") {
+            searchResult = null;
+        }
+        else {
+            const api = new RadioBrowserApi('SoundSphere: Radio');
+
+            searchResult = await api.searchStations({ name: input, limit: 20 });
         }
     }
 
@@ -55,42 +88,66 @@
     }
 </script>
 
-<main class="h-screen grid grid-cols-11 grid-rows-12">
-    <div class="flex justify-center items-center row-start-1 row-end-3  col-start-0 col-end-2">
-        <Button class="bg-transparent hover:bg-transparent hover:text-gray-400 active:text-[#181414]"><Menu size="32"/></Button>
-    </div>
-    <div class="flex justify-center items-center row-start-1 row-end-3  col-start-3 col-end-10">
-        <Input class="h-[24px]" placeholder="Search" type="text"><Search color="#74747a"/></Input>
-    </div>
-    <div class="flex justify-center items-center row-start-1 row-end-3  col-start-10 col-end-12">
-        <Label for="spotifyRadioToggle"><RadioTower/></Label>
-        <Switch on:click={() => isSpotify.set(true)} class="m-3" id="spotifyRadioToggle"></Switch>
-        <Label for="spotifyRadioToggle"><AudioLines/></Label>
-    </div>
-    <div class="flex justify-center items-center row-start-3 row-end-9 col-start-5 col-end-8">
-        <AspectRatio ratio={1}>
-            <img id="nowPlayingImage" src="" alt="nowPlayingImage">
-        </AspectRatio>
-    </div>
-    <div class="col-start-3 col-end-10 row-start-9 row-end-11 lg:pt-7">
-        {#if true}
-            <h3 class="text-2xl text-white p-0">Title</h3>
-            <h4 class="text-xl text-gray-400 p-0">Artist</h4>
+<main style={`background: linear-gradient(0deg, #171313 0%, ${nowPlayingImageColor || '#121212'} 100%);`} class="h-screen grid grid-cols-11 grid-rows-12">
+    {#if loading}
+        <div class="flex justify-center items-center row-start-1 row-end-3  col-start-3 col-end-10">
+            <Skeleton class="h-[24px] w-full"></Skeleton>
+        </div>
+        <div class="flex justify-center items-center row-start-6 row-end-7 col-start-5 col-end-8">
+            <AspectRatio ratio={1}>
+                <Skeleton class="h-full w-full"></Skeleton>
+            </AspectRatio>
+        </div>
+        <div class="col-start-3 col-end-10 row-start-9 row-end-11 lg:pt-7 ">
+            <Skeleton class="h-16 w-60"></Skeleton>
+        </div>
+        <div id="progress" class="flex justify-center items-center col-start-3 col-end-10 row-start-10">
+            <Skeleton class="h-2 w-full"></Skeleton>
+        </div>
+        <div class="flex justify-center items-center col-start-5 col-end-8 row-start-11">
+            <Skeleton class="h-full w-1/2"></Skeleton>
+        </div>
+    {:else}
+        <div class="flex justify-center items-center row-start-1 row-end-3  col-start-3 col-end-10">
+            <Input bind:value={input} on:input={getSearchResult} class="h-[24px]" placeholder="Search"
+                   type="text">
+                <Search color="#74747a"/>
+            </Input>
+        </div>
+        <div class="flex justify-center items-center row-start-1 row-end-3  col-start-10 col-end-12">
+            <Label for="spotifyRadioToggle">
+                <RadioTower color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/>
+            </Label>
+            <Switch on:click={() => {
+                localStorage.setItem('isSpotify', 'true');
+                isSpotify.set(true);
+            }} class="m-3" id="spotifyRadioToggle"></Switch>
+            <Label for="spotifyRadioToggle">
+                <AudioLines color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/>
+            </Label>
+        </div>
+        {#if searchResult !== null}
+            <div in:slide={{duration: 250, delay: 50}} out:slide={{duration: 250}}
+                 class="row-start-3 row-end-12 col-start-3 col-end-10">
+                <SearchBar callbackPlayRadio={(url, imgUrl) => playRadio(url, imgUrl)} color={'white'} radioArray={searchResult}></SearchBar>
+            </div>
+        {:else}
+            <div in:blur={{duration: 50, delay: 250}} out:blur={{duration: 50}}
+                 class="flex justify-center items-center row-start-4 row-end-9 col-start-5 col-end-8">
+                <AspectRatio ratio={1}>
+                    <img id="nowPlayingImage" class="w-full h-full" src={nowPlayingImageUrl} alt="nowPlayingImage">
+                </AspectRatio>
+            </div>
+            <div class="flex justify-center items-center col-start-5 col-end-8 row-start-11">
+                <Button on:click={playToggle}
+                        class="bg-transparent hover:bg-transparent hover:text-gray-400 active:text-[#121212]">
+                    {#if !playing}
+                        <CirclePlay size="48"/>
+                    {:else}
+                        <CirclePause size="48"/>
+                    {/if}
+                </Button>
+            </div>
         {/if}
-    </div>
-    <div class="flex justify-center items-center col-start-3 col-end-10 row-start-10">
-        <Progress id="progress" class="h-2"></Progress>
-    </div>
-    <div class="flex items-end  col-start-3 col-end-4 row-start-10">
-        <p class="text-gray-400"></p>
-    </div>
-    <div class="flex justify-end items-end col-start-9 col-end-10 row-start-10">
-        <p class="text-gray-400"></p>
-    </div>
-    <div class="flex justify-center items-center col-start-5 col-end-8 row-start-11">
-        <Button class="bg-transparent hover:bg-transparent hover:text-gray-400 active:text-[#181414]"><SkipBack size="48"/></Button>
-        <Button class="bg-transparent hover:bg-transparent hover:text-gray-400 active:text-[#181414]">
-        </Button>
-        <Button class="bg-transparent hover:bg-transparent hover:text-gray-400 active:text-[#181414]"><SkipForward size="48"/></Button>
-    </div>
+    {/if}
 </main>

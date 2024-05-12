@@ -5,7 +5,7 @@
     import {isSpotify, isSpotifySdkReady} from '$lib/stores/stores.js';
 
     onMount(() => {
-        localStorage.getItem('isSpotify');
+        isSpotify;
         window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
     })
 </script>

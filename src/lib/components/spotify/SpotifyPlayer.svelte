@@ -195,7 +195,10 @@
                 <Label for="spotifyRadioToggle">
                     <RadioTower color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/>
                 </Label>
-                <Switch checked on:click={() => isSpotify.set(false)} class="m-3" id="spotifyRadioToggle"></Switch>
+                <Switch checked on:click={() => {
+                    localStorage.setItem('isSpotify', 'false');
+                    isSpotify.set(false);
+                }} class="m-3" id="spotifyRadioToggle"></Switch>
                 <Label for="spotifyRadioToggle">
                     <AudioLines color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/>
                 </Label>
