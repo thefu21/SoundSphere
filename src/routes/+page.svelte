@@ -6,8 +6,12 @@
     import {fly} from "svelte/transition";
 
     onMount(() => {
-        //window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
-        isSpotifySdkReady.set(true)
+        if (window.__TAURI__) {
+            isSpotifySdkReady.set(true)
+        }
+        else{
+            window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
+        }
         let storageValue = localStorage.getItem('isSpotify') || false;
         isSpotify.set(storageValue === 'true');
     })

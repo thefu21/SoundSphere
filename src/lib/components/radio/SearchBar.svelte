@@ -20,14 +20,14 @@
                 tabindex="0"
                 on:keydown={(event) => {
                     if (event.key === "Enter" || event.key === "Space") {
-                    callbackPlayRadio(searchResult.urlResolved, searchResult.favicon);
+                    callbackPlayRadio(searchResult);
                     }
                 }}
                 on:mouseover={() => hover = i}
                 on:mouseleave={() => hover = null}
                 on:focus={() => hover = i}
                 on:blur={() => hover = null}
-                on:click={() => callbackPlayRadio(searchResult.urlResolved, searchResult.favicon)}
+                on:click={() => callbackPlayRadio(searchResult)}
                 class="bg-white rounded p-3 my-3 flex gap-3 h-36 w-full"
                 style="background-color: {hover === i ? whiteColorsHover : whiteColor};"
         >

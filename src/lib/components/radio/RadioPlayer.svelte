@@ -21,6 +21,7 @@
     let input = '';
     let nowPlayingImageColor;
     let nowPlayingImageUrl;
+    let nowPlayingObject;
 
 
     onDestroy(() => {
@@ -34,10 +35,17 @@
 
         fac = new FastAverageColor();
         try {
-            let radio = localStorage.getItem('radio').split(',');
-            playRadio(radio[0],radio[1]);
+            let radio = JSON.parse(localStorage.getItem('radio'));
+            playRadio(radio);
         }
         catch (e) {}
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                input = '';
+                searchResult = null;
+            }
+        });
     })
 
     const playToggle = () => {
@@ -51,9 +59,10 @@
         }
     }
 
-    const playRadio = async (url, imgUrl) => {
+    const playRadio = async (object) => {
         nowPlayingImageColor = undefined;
-        nowPlayingImageUrl = imgUrl;
+        nowPlayingImageUrl = object.favicon;
+        nowPlayingObject = object;
         fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(nowPlayingImageUrl)}`)
             .then(response => {
                 if (response.ok) {
@@ -68,12 +77,12 @@
                 console.error('There was a problem with the fetch operation:', error);
             });
         stopPlayback();
-        audio = new Audio(url);
+        audio = new Audio(object.urlResolved);
         searchResult = null;
         input = '';
         await audio.play();
         playing = true;
-        localStorage.setItem('radio',url + ',' + imgUrl);
+        localStorage.setItem('radio',object);
 
     }
 
@@ -137,7 +146,7 @@
         {#if searchResult !== null}
             <div in:slide={{duration: 250, delay: 50}} out:slide={{duration: 250}}
                  class="row-start-3 row-end-12 col-start-3 col-end-10">
-                <SearchBar callbackPlayRadio={(url, imgUrl) => playRadio(url, imgUrl)} color={nowPlayingImageColor} radioArray={searchResult}></SearchBar>
+                <SearchBar callbackPlayRadio={(url, imgUrl, ) => playRadio(url, imgUrl)} color={nowPlayingImageColor} radioArray={searchResult}></SearchBar>
             </div>
         {:else}
             <div in:blur={{duration: 50, delay: 250}} out:blur={{duration: 50}}
@@ -161,6 +170,12 @@
                         <CirclePause size="48"/>
                     {/if}
                 </Button>
+            </div>
+            <div class="col-start-3 col-end-10 row-start-9 row-end-11 lg:pt-7">
+                {#if nowPlayingObject !== undefined}
+                    <h3 class="text-2xl text-white p-0">{nowPlayingObject.name}</h3>
+                    <h4 class="text-xl text-gray-400 p-0">{nowPlayingObject.country}</h4>
+                {/if}
             </div>
         {/if}
     {/if}
