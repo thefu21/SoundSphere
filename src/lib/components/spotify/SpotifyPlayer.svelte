@@ -1,6 +1,6 @@
 <script>
     import {newAccessToken, getAccessToken, redirectToAuthCodeFlow} from '$lib/spotify/auth.js';
-    import {onMount} from 'svelte';
+    import {onDestroy, onMount} from 'svelte';
     import axios from 'axios';
     import {AudioLines, CirclePause, CirclePlay, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
     import {Input} from '$lib/components/ui/input/index.js';
@@ -89,6 +89,11 @@
         }
     };
 
+    onDestroy(() => {
+        player.pause();
+        return player.disconnect();
+    })
+
     onMount(() => {
         window.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
@@ -150,12 +155,6 @@
             }
 
         });
-
-
-        return () => {
-            player.pause();
-            return player.disconnect();
-        };
     });
 </script>
 

@@ -10,7 +10,7 @@
     import {AudioLines, CirclePause, CirclePlay, RadioTower, Search} from 'lucide-svelte';
     import SearchBar from '$lib/components/radio/SearchBar.svelte';
     import {blur, slide} from 'svelte/transition';
-    import {onMount} from 'svelte';
+    import {onDestroy, onMount} from 'svelte';
 
     let audio;
     let playing = false;
@@ -23,6 +23,12 @@
     let nowPlayingImageUrl;
 
 
+    onDestroy(() => {
+        if (audio) {
+            stopPlayback();
+        }
+    });
+
     onMount(() => {
         setTimeout(() => {loading = false;}, 500)
 
@@ -32,8 +38,6 @@
             playRadio(radio[0],radio[1]);
         }
         catch (e) {}
-
-        return () => stopPlayback;
     })
 
     const playToggle = () => {

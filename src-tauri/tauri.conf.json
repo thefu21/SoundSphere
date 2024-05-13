@@ -4,10 +4,10 @@
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:5173",
-    "distDir": "../src"
+    "distDir": "../src/"
   },
   "package": {
-    "productName": "soundsphere",
+    "productName": "SoundSphere",
     "version": "0.1.0"
   },
   "tauri": {
