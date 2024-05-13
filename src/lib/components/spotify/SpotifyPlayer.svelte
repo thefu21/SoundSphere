@@ -251,7 +251,19 @@
                 </div>
             {/if}
         {:else}
-            <div class="flex flex-col gap-12 justify-center items-center col-start-1 col-end-12 row-start-1 row-end-13">
+            <div class="flex justify-center items-center row-start-1 row-end-3  col-start-10 col-end-12">
+                <Label for="spotifyRadioToggle">
+                    <RadioTower color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/>
+                </Label>
+                <Switch checked on:click={() => {
+                    localStorage.setItem('isSpotify', 'false');
+                    isSpotify.set(false);
+                }} class="m-3" id="spotifyRadioToggle"></Switch>
+                <Label for="spotifyRadioToggle">
+                    <AudioLines color={`${nowPlayingImageColor === undefined ? '#74747a' : '#121212'}`}/>
+                </Label>
+            </div>
+            <div class="flex flex-col gap-12 justify-center items-center col-start-4 col-end-9 row-start-1 row-end-13">
                 <h1 class="text-white text-2xl">Sound Sphere: Spotify</h1>
                 <Button class="bg-[#1db954]" on:click={() => redirectToAuthCodeFlow(clientID)}>Login to Spotify</Button>
             </div>

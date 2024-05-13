@@ -7,12 +7,14 @@
     export let color;
     let hover = null;
 
+    $: sortedRadioArray = radioArray.slice().sort((a, b) => b.votes - a.votes);
+
     $: whiteColor = mixColorWithWhite(color, 0.2);
     $: whiteColorsHover = mixColorWithWhite(color, 0.6);
 </script>
 
 <ScrollArea class="h-full w-full">
-    {#each radioArray as searchResult, i}
+    {#each sortedRadioArray as searchResult, i}
         <div
                 role="button"
                 tabindex="0"
@@ -29,7 +31,9 @@
                 class="bg-white rounded p-3 my-3 flex gap-3 h-36 w-full"
                 style="background-color: {hover === i ? whiteColorsHover : whiteColor};"
         >
-            <img class="max-h-full w-auto" alt="albumCover" src={searchResult.favicon}>
+            {#if searchResult.favicon}
+                <img class="max-h-full w-auto" alt="albumCover" src={searchResult.favicon}>
+            {/if}
             <div>
                 <h3 id={"songTitle" + i} class="text-xl text-[#171313]">{searchResult.name}</h3>
                 <h4 class="text-l text-gray-500">{searchResult.country}</h4>

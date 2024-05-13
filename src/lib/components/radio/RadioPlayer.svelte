@@ -14,7 +14,7 @@
 
     let audio;
     let playing = false;
-    let loading = false;
+    let loading = true;
     let fac;
 
     let searchResult = null;
@@ -24,13 +24,16 @@
 
 
     onMount(() => {
-        fac = new FastAverageColor();
-        let radio = localStorage.getItem('radio').split(',');
-        playRadio(radio[0],radio[1])
+        setTimeout(() => {loading = false;}, 500)
 
-        return () => {
-            stopPlayback();
+        fac = new FastAverageColor();
+        try {
+            let radio = localStorage.getItem('radio').split(',');
+            playRadio(radio[0],radio[1]);
         }
+        catch (e) {}
+
+        return () => stopPlayback;
     })
 
     const playToggle = () => {
@@ -129,13 +132,19 @@
         {#if searchResult !== null}
             <div in:slide={{duration: 250, delay: 50}} out:slide={{duration: 250}}
                  class="row-start-3 row-end-12 col-start-3 col-end-10">
-                <SearchBar callbackPlayRadio={(url, imgUrl) => playRadio(url, imgUrl)} color={'white'} radioArray={searchResult}></SearchBar>
+                <SearchBar callbackPlayRadio={(url, imgUrl) => playRadio(url, imgUrl)} color={nowPlayingImageColor || '#ffffff'} radioArray={searchResult}></SearchBar>
             </div>
         {:else}
             <div in:blur={{duration: 50, delay: 250}} out:blur={{duration: 50}}
                  class="flex justify-center items-center row-start-4 row-end-9 col-start-5 col-end-8">
                 <AspectRatio ratio={1}>
-                    <img id="nowPlayingImage" class="w-full h-full" src={nowPlayingImageUrl} alt="nowPlayingImage">
+                    {#if nowPlayingImageUrl}
+                        <img id="nowPlayingImage" class="w-full h-full" src={nowPlayingImageUrl} alt="nowPlayingImage">
+                        {:else}
+                        <div class="bg-background w-full h-full rounded flex justify-center items-center">
+                            <h3 class="text-xl">No image found</h3>
+                        </div>
+                    {/if}
                 </AspectRatio>
             </div>
             <div class="flex justify-center items-center col-start-5 col-end-8 row-start-11">

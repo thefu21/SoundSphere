@@ -3,10 +3,12 @@
     import RadioPlayer from '$lib/components/radio/RadioPlayer.svelte';
     import {onMount} from 'svelte';
     import {isSpotify, isSpotifySdkReady} from '$lib/stores/stores.js';
+    import {fly} from "svelte/transition";
 
     onMount(() => {
-        isSpotify;
         window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
+        let storageValue = localStorage.getItem('isSpotify') || false;
+        isSpotify.set(storageValue === 'true');
     })
 </script>
 
@@ -16,8 +18,14 @@
     <title>SoundSphere</title>
 </svelte:head>
 
-{#if $isSpotify}
-    <SpotifyPlayer/>
+<div class="bg-[#121212]">
+    {#if $isSpotify}
+        <div in:fly={{duration: 100, x: -1920, delay: 100}} out:fly={{duration: 100, x: -1920}}>
+            <SpotifyPlayer/>
+        </div>
     {:else}
-    <RadioPlayer></RadioPlayer>
-{/if}
+        <div in:fly={{duration: 100, x: 1920, delay: 100}} out:fly={{duration: 100, x: 1920}}>
+            <RadioPlayer></RadioPlayer>
+        </div>
+    {/if}
+</div>
