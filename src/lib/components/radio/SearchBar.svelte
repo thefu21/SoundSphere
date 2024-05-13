@@ -9,8 +9,8 @@
 
     $: sortedRadioArray = radioArray.slice().sort((a, b) => b.votes - a.votes);
 
-    $: whiteColor = mixColorWithWhite(color, 0.2);
-    $: whiteColorsHover = mixColorWithWhite(color, 0.6);
+    $: whiteColor = mixColorWithWhite(color || '#ffffff', 0.2);
+    $: whiteColorsHover = mixColorWithWhite(color || '#74747a', 0.6);
 </script>
 
 <ScrollArea class="h-full w-full">

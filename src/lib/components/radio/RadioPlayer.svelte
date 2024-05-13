@@ -48,6 +48,7 @@
     }
 
     const playRadio = async (url, imgUrl) => {
+        nowPlayingImageColor = undefined;
         nowPlayingImageUrl = imgUrl;
         fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(nowPlayingImageUrl)}`)
             .then(response => {
@@ -132,7 +133,7 @@
         {#if searchResult !== null}
             <div in:slide={{duration: 250, delay: 50}} out:slide={{duration: 250}}
                  class="row-start-3 row-end-12 col-start-3 col-end-10">
-                <SearchBar callbackPlayRadio={(url, imgUrl) => playRadio(url, imgUrl)} color={nowPlayingImageColor || '#ffffff'} radioArray={searchResult}></SearchBar>
+                <SearchBar callbackPlayRadio={(url, imgUrl) => playRadio(url, imgUrl)} color={nowPlayingImageColor} radioArray={searchResult}></SearchBar>
             </div>
         {:else}
             <div in:blur={{duration: 50, delay: 250}} out:blur={{duration: 50}}

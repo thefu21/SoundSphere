@@ -1,9 +1,7 @@
 <script>
     import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
     import { mixColorWithWhite } from '$lib';
-    import {Button} from '$lib/components/ui/button/index.js';
     import {ListPlus} from 'lucide-svelte';
-    import {onMount} from 'svelte';
 
     export let callbackPlaySong;
     export let callbackAddToQueue;
@@ -11,8 +9,8 @@
     export let color;
     let hover = null;
 
-    $: whiteColor = mixColorWithWhite(color, 0.2);
-    $: whiteColorsHover = mixColorWithWhite(color, 0.6);
+    $: whiteColor = mixColorWithWhite(color || '#ffffff', 0.2);
+    $: whiteColorsHover = mixColorWithWhite(color || '#74747a', 0.6);
 </script>
 
 <ScrollArea class="h-full w-full">
