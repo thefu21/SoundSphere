@@ -6,20 +6,14 @@
     import {fly} from "svelte/transition";
 
     onMount(() => {
-        if (window.__TAURI__) {
-            isSpotifySdkReady.set(true)
-        }
-        else{
-            window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
-        }
+        window.onSpotifyWebPlaybackSDKReady = () => {isSpotifySdkReady.set(true)}
         let storageValue = localStorage.getItem('isSpotify') || false;
         isSpotify.set(storageValue === 'true');
     })
 </script>
 
 <svelte:head>
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    <script src="https://unpkg.com/fast-average-color/dist/index.browser.min.js"></script>
+    <script src="https://sdk.scdn.co/spotify-player.js"/>
     <title>SoundSphere</title>
 </svelte:head>
 

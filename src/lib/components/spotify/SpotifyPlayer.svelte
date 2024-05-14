@@ -16,7 +16,7 @@
     import {mixColors} from '$lib';
     import SideMenu from '$lib/components/spotify/SideMenu.svelte';
     import {slide, blur} from 'svelte/transition';
-
+    import {FastAverageColor} from "fast-average-color";
     const clientID = 'eed7eaff183d4604b08e9de07393fbdd';
 
     let player;

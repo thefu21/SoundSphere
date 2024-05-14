@@ -4,7 +4,7 @@
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:5173",
-    "distDir": "../src/"
+    "distDir": "../build"
   },
   "package": {
     "productName": "SoundSphere",
@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "SoundSphere",
+      "identifier": "thefu21.music.player.spotify.soundsphere",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

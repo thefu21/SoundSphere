@@ -11,6 +11,7 @@
     import SearchBar from '$lib/components/radio/SearchBar.svelte';
     import {blur, slide} from 'svelte/transition';
     import {onDestroy, onMount} from 'svelte';
+    import {FastAverageColor} from "fast-average-color";
 
     let audio;
     let playing = false;
