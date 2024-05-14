@@ -1,5 +1,4 @@
 <script>
-    import {RadioBrowserApi} from 'radio-browser-api';
     import {isSpotify} from '$lib/stores/stores.js';
     import {Input} from '$lib/components/ui/input/index.js';
     import {Switch} from '$lib/components/ui/switch/index.js';
@@ -12,11 +11,14 @@
     import {blur, slide} from 'svelte/transition';
     import {onDestroy, onMount} from 'svelte';
     import {FastAverageColor} from "fast-average-color";
+    import axios from 'axios';
+    import {get_radiobrowser_base_url_random} from '$lib/radio/radio-browser.js';
 
     let audio;
     let playing = false;
     let loading = true;
     let fac;
+    let radioUrl
 
     let searchResult = null;
     let input = '';
@@ -31,8 +33,9 @@
         }
     });
 
-    onMount(() => {
+    onMount(async () => {
         setTimeout(() => {loading = false;}, 500)
+        radioUrl = await get_radiobrowser_base_url_random();
 
         fac = new FastAverageColor();
         try {
@@ -78,12 +81,12 @@
                 console.error('There was a problem with the fetch operation:', error);
             });
         stopPlayback();
-        audio = new Audio(object.urlResolved);
+        audio = new Audio(object.url_resolved);
         searchResult = null;
         input = '';
         await audio.play();
         playing = true;
-        localStorage.setItem('radio',object);
+        localStorage.setItem('radio',JSON.stringify(object));
 
     }
 
@@ -92,9 +95,18 @@
             searchResult = null;
         }
         else {
-            const api = new RadioBrowserApi('SoundSphere: Radio');
-
-            searchResult = await api.searchStations({ name: input, limit: 20 });
+            try {
+                const response = await axios.get(`${radioUrl}/json/stations/search`, {
+                    params: {
+                        name: input,
+                        limit: 20,
+                        lastcheckok: 1
+                    }
+                });
+                searchResult = response.data;
+            } catch (error) {
+                console.error('Fehler beim Abrufen der Senderdaten:', error.message);
+            }
         }
     }
 

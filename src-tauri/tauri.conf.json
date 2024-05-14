@@ -14,7 +14,7 @@
     "allowlist": {
       "all": false,
       "http": {
-        "scope": ["https://*.spotify.com/*"]
+        "scope": ["https://*.spotify.com/*", "https://*.radio-browser.info/*", "https://api.allorigins.win/*"]
       }
     },
     "bundle": {
