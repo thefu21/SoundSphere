@@ -12,7 +12,10 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "http": {
+        "scope": ["https://*.spotify.com/*"]
+      }
     },
     "bundle": {
       "active": true,
