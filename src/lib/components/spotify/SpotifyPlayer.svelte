@@ -119,7 +119,7 @@
                     getOAuthToken: cb => {
                         cb(getAccessToken(clientID));
                     },
-                    volume: 0.5
+                    volume: 1
                 });
 
                 if (localStorage.getItem('spotifyAccessToken') !== null) loggedIn = true;
