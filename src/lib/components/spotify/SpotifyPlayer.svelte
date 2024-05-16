@@ -1,6 +1,6 @@
 <script>
     import {newAccessToken, getAccessToken, redirectToAuthCodeFlow} from '$lib/spotify/auth.js';
-    import {onMount} from 'svelte';
+    import {onDestroy, onMount} from 'svelte';
     import axios from 'axios';
     import {AudioLines, CirclePause, CirclePlay, RadioTower, Search, SkipBack, SkipForward} from 'lucide-svelte';
     import {Input} from '$lib/components/ui/input/index.js';
@@ -16,7 +16,7 @@
     import {mixColors} from '$lib';
     import SideMenu from '$lib/components/spotify/SideMenu.svelte';
     import {slide, blur} from 'svelte/transition';
-
+    import {FastAverageColor} from "fast-average-color";
     const clientID = 'eed7eaff183d4604b08e9de07393fbdd';
 
     let player;
@@ -89,6 +89,11 @@
         }
     };
 
+    onDestroy(() => {
+        player.pause();
+        return player.disconnect();
+    })
+
     onMount(() => {
         window.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
@@ -114,7 +119,7 @@
                     getOAuthToken: cb => {
                         cb(getAccessToken(clientID));
                     },
-                    volume: 0.5
+                    volume: 1
                 });
 
                 if (localStorage.getItem('spotifyAccessToken') !== null) loggedIn = true;
@@ -150,12 +155,6 @@
             }
 
         });
-
-
-        return () => {
-            player.pause();
-            return player.disconnect();
-        };
     });
 </script>
 

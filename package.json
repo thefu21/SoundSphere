@@ -5,12 +5,15 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"tauri": "tauri"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-static": "^3.0.1",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@tauri-apps/cli": "^1.5.14",
 		"autoprefixer": "^10.4.19",
 		"postcss": "^8.4.38",
 		"svelte": "^4.2.7",
@@ -22,8 +25,8 @@
 		"axios": "^1.6.8",
 		"bits-ui": "^0.21.7",
 		"clsx": "^2.1.0",
+		"fast-average-color": "^9.4.0",
 		"lucide-svelte": "^0.368.0",
-		"radio-browser-api": "^6.0.1",
 		"tailwind-merge": "^2.2.2",
 		"tailwind-variants": "^0.2.1"
 	}
