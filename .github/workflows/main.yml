@@ -1,0 +1,50 @@
+            - name: ARM runner
+  # You may pin to the exact commit or the version.
+  # uses: pguyot/arm-runner-action@c6985ff3b578ceae452ad1dac02d85d57903b54f
+  uses: pguyot/arm-runner-action@v2.6.3
+  with:
+    # System base image
+    base_image: # default is raspios_lite:latest
+    # Additional MB for image
+    image_additional_mb: # optional, default is 0
+    # Bind mount repository instead of copying it
+    bind_mount_repository: # optional, default is no
+    # CPU architecture, arm1176 for arm6vl (Pi Zero)
+    cpu: # optional, default is arm1176:cortex-a53
+    # Path to cpu info file to be mounted on /proc/cpuinfo
+    cpu_info: # optional, default is 
+    # Commands to run in the image, executed with /bin/sh
+    commands: # default is uname -a
+    # Paths of artifacts to copy from inside the image on completion
+    copy_artifact_path: # optional
+    # Where to copy artifacts on completion
+    copy_artifact_dest: # optional, default is .
+    # Where to copy repository path before running commands
+    copy_repository_path: # optional, default is 
+    # Optimize image during final cleanup
+    optimize_image: # optional, default is yes
+    # Use systemd-nspawn instead of chroot
+    use_systemd_nspawn: # optional, default is no
+    # Options passed to systemd-nspawn, e.g. -E CI=${CI}
+    systemd_nspawn_options: # optional, default is 
+    # Partition number for boot (/boot), empty means none
+    bootpartition: # optional, default is 1
+    # Partition number for root (/)
+    rootpartition: # optional, default is 2
+    # Path to shell to run the commands with
+    shell: # optional, default is /bin/sh
+    # The shell package to install, if different from shell
+    shell_package: # optional, default is 
+    # User to run commands on the image. Must exist in the image
+    user: # optional, default is 
+    # Exit immediately if a command exits with a non-zero status
+    exit_on_fail: # optional, default is yes
+    # Copy artifacts if a command exits with a non-zero status
+    copy_artifacts_on_fail: # optional, default is no
+    # Display commands as they are executed
+    debug: # optional, default is yes
+    # Imports $GITHUB_ENV variables into the image environment
+    import_github_env: # optional, default is no
+    # Exports $GITHUB_ENV from the image environment to subsequent tasks
+    export_github_env: # optional, default is no
+          
