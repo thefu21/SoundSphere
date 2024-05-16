@@ -5,13 +5,15 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"tauri": "tauri"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-static": "^3.0.1",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@tauri-apps/cli": "^1.5.14",
 		"autoprefixer": "^10.4.19",
 		"postcss": "^8.4.38",
 		"svelte": "^4.2.7",
