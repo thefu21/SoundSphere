@@ -34,10 +34,10 @@ jobs:
           sudo apt-get install -y nodejs
           npm install next@latest react@latest react-dom@latest eslint-config-next@latest
           sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
-          sudo apt-get install -y gcc-arm-linux-gnueabihf pkg-config-arm-linux-gnueabihf
+          sudo apt-get install -y gcc-arm-linux-gnueabihf pkg-config
           # Set up cross-compilation for pkg-config
           echo 'export PKG_CONFIG_ALLOW_CROSS=1' >> $HOME/.bashrc
-          echo 'export PKG_CONFIG_PATH=/usr/arm-linux-gnueabihf/lib/pkgconfig' >> $HOME/.bashrc
+          echo 'export PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig' >> $HOME/.bashrc
           echo 'export PKG_CONFIG_SYSROOT_DIR=/' >> $HOME/.bashrc
           . $HOME/.bashrc
       - name: Clean up previous builds
@@ -48,6 +48,9 @@ jobs:
       - name: Build the application
         run: |
           export HOME=/home/runner
+          export PKG_CONFIG_ALLOW_CROSS=1
+          export PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig:/usr/share/pkgconfig
+          export PKG_CONFIG_SYSROOT_DIR=/
           # Build the application for armhf
           cargo tauri build --target armv7-unknown-linux-gnueabihf
       - name: Upload deb bundle
