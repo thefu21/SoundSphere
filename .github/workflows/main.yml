@@ -18,31 +18,18 @@ jobs:
           optimize_image: false
       - name: Prepare environment
         run: |
-          # Rust complains (rightly) that $HOME doesn't match eid home
-          export HOME=/root
           # Workaround to CI worker being stuck on Updating crates.io index
           export CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
           # Install setup prerequisites
-          sudo apt-get update -y --allow-releaseinfo-change
-          sudo apt-get upgrade -y
-          sudo apt-get autoremove -y
-          sudo apt-get install -y curl
+          sudo -E apt-get update -y --allow-releaseinfo-change
+          sudo -E apt-get upgrade -y
+          sudo -E apt-get autoremove -y
+          sudo -E apt-get install -y curl
+          # Set HOME explicitly
+          export HOME=/home/runner
           curl https://sh.rustup.rs -sSf | sh -s -- -y
           . "$HOME/.cargo/env"
           curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash
-          sudo apt-get install -y nodejs
+          sudo -E apt-get install -y nodejs
           npm install next@latest react@latest react-dom@latest eslint-config-next@latest
-          sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
-          cargo install tauri-cli
-      - name: Clean up previous builds
-        run: |
-          rm -rf /SoundSphere/src-tauri/target
-      - name: Install frontend dependencies
-        run: npm install
-      - name: Build the application
-        run: cargo tauri build
-      - name: Upload deb bundle
-        uses: actions/upload-artifact@v3
-        with:
-          name: Debian Bundle
-          path: ${{ github.workspace }}/target/release/bundle/deb/tauri_1.4_arm64.deb
+          sudo -E apt-get install -y libwebkit2gtk-4.0-dev build-essential
