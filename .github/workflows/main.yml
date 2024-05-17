@@ -12,7 +12,7 @@ jobs:
         uses: pguyot/arm-runner-action@v2.5.2
         with:
           base_image: raspios_lite:latest
-          cpu: cortex-a8
+          cpu: arm1176jzf-s
           bind_mount_repository: true
           image_additional_mb: 10240
           optimize_image: false
@@ -45,4 +45,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Debian Bundle
-          path: ${{ github.workspace }}/src-tauri/target/release/bundle/deb/soundsphere_0.1.0_amd64.deb
+          path: ${{ github.workspace }}/target/release/bundle/deb/tauri_1.4_armhf.deb
