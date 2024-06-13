@@ -12,3 +12,9 @@ export const spotifyApiSearch = async (query, type, clientID) => {
         }
     })
 }
+
+export function findLargestImageIndex(arr) {
+    return arr
+        .map((o) => o.height)
+        .indexOf(Math.max(...arr.map((o) => o.height)));
+}

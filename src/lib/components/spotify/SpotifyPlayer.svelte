@@ -10,7 +10,7 @@
     import {Label} from '$lib/components/ui/label/index.js';
     import {Skeleton} from '$lib/components/ui/skeleton/index.js';
     import {AspectRatio} from '$lib/components/ui/aspect-ratio/index.js';
-    import {spotifyApiSearch} from '$lib/spotify/playerApi.js';
+    import {findLargestImageIndex, spotifyApiSearch} from '$lib/spotify/playerApi.js';
     import {isSpotify, isSpotifySdkReady} from '$lib/stores/stores.js';
     import SearchBar from '$lib/components/spotify/SearchBar.svelte';
     import {mixColors} from '$lib';
@@ -76,7 +76,8 @@
             if (input !== '') {
                 const response = await spotifyApiSearch(input, 'track', clientID);
                 if (input !== '') {
-                    searchResult = response.data.tracks.items; // Return the items array
+                    searchResult = response.data.tracks.items;
+                    console.log(searchResult)
                 } else {
                     searchResult = null;
                 }
@@ -131,7 +132,7 @@
                 player.addListener('player_state_changed', (r) => {
                     if (loading) loading = false;
                     nowPlayingObject = r.track_window.current_track;
-                    nowPlayingImageUrl = nowPlayingObject.album.images[2].url;
+                    nowPlayingImageUrl = nowPlayingObject.album.images[findLargestImageIndex(nowPlayingObject.album.images)].url;
                     fac.getColorAsync(nowPlayingImageUrl).then(res => nowPlayingImageColor = res.hex);
                     paused = r.paused;
                     nowPlayingPosition = r.position;
@@ -212,7 +213,7 @@
                 <div in:blur={{duration: 50, delay: 250}} out:blur={{duration: 50}}
                      class="flex justify-center items-center row-start-3 row-end-9 col-start-5 col-end-8">
                     <AspectRatio ratio={1}>
-                        <img id="nowPlayingImage" src={nowPlayingImageUrl} alt="nowPlayingImage">
+                        <img class="w-full h-full" id="nowPlayingImage" src={nowPlayingImageUrl} alt="nowPlayingImage">
                     </AspectRatio>
                 </div>
                 <div class="col-start-3 col-end-10 row-start-9 row-end-11 lg:pt-7">
